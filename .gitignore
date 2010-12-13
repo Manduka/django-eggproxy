@@ -3,4 +3,5 @@ mydb.sqlite
 /bin
 /include
 /src
+/lib64
 /lib
