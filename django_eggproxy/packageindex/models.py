@@ -75,6 +75,7 @@ class PackageIndex(models.Model):
         downloads = scraper.get_package_downloads(application.name)
         packages = list()
         for download in downloads:
+            if not download.get('md5'): continue
             package = create_or_update(Package,
                                        application=application,
                                        package_index=self,
@@ -101,7 +102,7 @@ class PackageIndex(models.Model):
         )
 
 class Application(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     
     def __unicode__(self):
