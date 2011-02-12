@@ -75,7 +75,11 @@ class PackageIndex(models.Model):
         downloads = scraper.get_package_downloads(application.name)
         packages = list()
         for download in downloads:
-            if not download.get('md5'): continue
+            if not download.get('md5'):
+                if Package.objects.filter(application=application, 
+                                          package_index=self,
+                                          title=download['filename']).exists():
+                    continue
             package = create_or_update(Package,
                                        application=application,
                                        package_index=self,
