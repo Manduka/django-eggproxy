@@ -75,6 +75,8 @@ class PackageIndex(models.Model):
         downloads = scraper.get_package_downloads(application.name)
         packages = list()
         for download in downloads:
+            if not urlparse(download['location']).scheme:
+                continue
             if not download.get('md5'):
                 try:
                     package = Package.objects.get(application=application, 
@@ -215,7 +217,10 @@ class Package(models.Model):
     
     def populate_download(self):
         if not self.download:
-            name = urlparse(self.source_download).path.split('/')[-1]
+            url = urlparse(self.source_download)
+            if not url.scheme:
+                return
+            name = url.path.split('/')[-1]
             content = urllib.urlretrieve(self.source_download)
             self.download.save(name, File(open(content[0])), save=True)
 
