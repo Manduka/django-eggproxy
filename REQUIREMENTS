@@ -1,3 +1,5 @@
 django>=1.2
 django-guardian
 django-staticfiles
+django-celery
+django-kombu

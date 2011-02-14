@@ -64,6 +64,8 @@ INSTALLED_APPS = (
     'packageindex',
     'guardian',
     'staticfiles',
+    'djcelery',
+    'djkombu',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -91,3 +93,7 @@ DATABASE_PORT = ''
 SITE_ID = 1
 
 ANONYMOUS_USER_ID = 5
+
+BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
