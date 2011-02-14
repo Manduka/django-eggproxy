@@ -76,10 +76,15 @@ class PackageIndex(models.Model):
         packages = list()
         for download in downloads:
             if not download.get('md5'):
-                if Package.objects.filter(application=application, 
-                                          package_index=self,
-                                          title=download['filename']).exists():
+                try:
+                    package = Package.objects.get(application=application, 
+                                                  package_index=self,
+                                                  active=True,
+                                                  title=download['filename'])
+                    packages.append(package)
                     continue
+                except Package.DoesNotExist:
+                    pass
             package = create_or_update(Package,
                                        application=application,
                                        package_index=self,
