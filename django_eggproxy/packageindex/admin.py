@@ -11,6 +11,7 @@ class PackageAccessKeyAdmin(admin.ModelAdmin):
 admin.site.register(PackageAccessKey, PackageAccessKeyAdmin)
 
 class PackageIndexAdmin(admin.ModelAdmin):
+    list_display = ['name', 'priority', 'url', 'last_update']
     inlines = [UserPermissionInline, GroupPermissionInline]
     actions = ['populate_index',
                'populate_packages']
@@ -26,6 +27,7 @@ class PackageIndexAdmin(admin.ModelAdmin):
 admin.site.register(PackageIndex, PackageIndexAdmin)
 
 class ApplicationAdmin(admin.ModelAdmin):
+    search_fields = ['name']
     actions = ['populate_packages']
     
     def populate_packages(self, request, queryset):
@@ -35,6 +37,9 @@ class ApplicationAdmin(admin.ModelAdmin):
 admin.site.register(Application, ApplicationAdmin)
 
 class PackageAdmin(admin.ModelAdmin):
+    search_fields = ['title', 'application__name']
+    list_display = ['title', 'application', 'active', 'downloads']
+    list_filter = ['active']
     raw_id_fields = ['application', 'package_index']
     actions = ['populate_download']
     

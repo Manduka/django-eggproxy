@@ -1,6 +1,10 @@
 import datetime
 
-import urllib
+import urllib2
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 from urlparse import urlparse
 
 from django.db import models
@@ -8,6 +12,24 @@ from django.core.files import File
 from django.contrib.auth.models import User
 
 from utils import PackageIndexScraper
+
+class URLFile(File):
+    def __init__(self, url, opener=None):
+        if opener is None:
+            opener = self.get_url_opener()
+        content = opener.open(url)
+        name = url
+        if 'content-size' in content.headers:
+            self.size = content.headers['content-size']
+        else:
+            content = content.read()
+            self.size = len(content)
+            content = StringIO(content)
+        super(URLFile, self).__init__(content, name)
+    
+    def get_url_opener(self):
+        redirect_handler = urllib2.HTTPRedirectHandler()
+        return urllib2.build_opener(redirect_handler)
 
 def create_or_update(model, **lookups):
     update = lookups.pop('update', {})
@@ -172,9 +194,16 @@ class PackageManager(models.Manager):
     def get_pending_downloads(self):
         return self.filter(download='', downloads__gt=0, active=True).exclude(source_download='')
     
-    def populate_pending_downloads(self):
+    def populate_pending_downloads(self, ignore_errors=False):
         for package in self.get_pending_downloads():
-            package.populate_download()
+            try:
+                package.populate_download()
+            except urllib2.URLError, error:
+                if ignore_errors:
+                    #TODO pump to a log
+                    print error
+                else:
+                    raise
 
 class Package(models.Model):
     title = models.CharField(max_length=100)
@@ -221,6 +250,6 @@ class Package(models.Model):
             if not url.scheme:
                 return
             name = url.path.split('/')[-1]
-            content = urllib.urlretrieve(self.source_download)
-            self.download.save(name, File(open(content[0])), save=True)
+            content = URLFile(self.source_download)
+            self.download.save(name, content, save=True)
 

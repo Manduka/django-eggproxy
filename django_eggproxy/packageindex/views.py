@@ -1,8 +1,11 @@
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.db.models import F
 from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
+from django.conf import settings
 
 from models import Application, Package, PackageIndex, PackageAccessKey
+
+refresh_enabled = lambda: getattr(settings, 'EGGPROXY_LIVE_REFRESH', False)
 
 def access_key_view(func):
     def wrapper(request, **kwargs):
@@ -17,8 +20,8 @@ def access_key_view(func):
 
 @access_key_view
 def application_list(request, access_key):
-    #TODO make on the fly refresh togable
-    PackageIndex.objects.refresh_stale_indexes()
+    if refresh_enabled():
+        PackageIndex.objects.refresh_stale_indexes()
     applications = Application.objects.all()
     return render_to_response('packageindex/application_list.html',
                               {'object_list':applications,
@@ -31,8 +34,8 @@ def application_detail(request, name, access_key):
     except Application.DoesNotExist:
         application = get_object_or_404(Application, name__iexact=name)
         return HttpResponseRedirect(application.get_absolute_url(access_key))
-    #TODO make on the fly fetch packages togable
-    application.refresh_stale_packages()
+    if refresh_enabled():
+        application.refresh_stale_packages()
     package_indexes = PackageIndex.objects.indexes_for_user(request.user)
     packages = application.package_dictionary(package_indexes)
     if not packages:
