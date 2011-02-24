@@ -34,8 +34,8 @@ def application_detail(request, name, access_key):
     except Application.DoesNotExist:
         application = get_object_or_404(Application, name__iexact=name)
         return HttpResponseRedirect(application.get_absolute_url(access_key))
-    if refresh_enabled():
-        application.refresh_stale_packages()
+    #if refresh_enabled():
+    application.refresh_stale_packages()
     package_indexes = PackageIndex.objects.indexes_for_user(request.user)
     packages = application.package_dictionary(package_indexes)
     if not packages:
