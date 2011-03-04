@@ -62,10 +62,10 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.admindocs',
     'packageindex',
+    'releases',
     'guardian',
     'staticfiles',
     'djcelery',
-    'djkombu',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -76,7 +76,7 @@ AUTHENTICATION_BACKENDS = (
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = '%s/public/media/' % PROJECT_DIR
-STATIC_ROOT = '%s/public/static/' % PROJECT_DIR
+STATIC_ROOT = ''#'%s/public/static/' % PROJECT_DIR
 WEB_ROOT = '%s/public/static/' % PROJECT_DIR
 
 TEMPLATE_DIRS = (
@@ -94,6 +94,10 @@ SITE_ID = 1
 
 ANONYMOUS_USER_ID = 5
 
-BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
+BROKER_BACKEND = "kombu.transport.memory.Transport"
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+import djcelery
+djcelery.setup_loader()
+
 
