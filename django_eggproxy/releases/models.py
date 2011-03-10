@@ -2,7 +2,7 @@ import os
 import tempfile
 import shutil
 
-from django.db import models
+from django.db import models, transaction
 from django.core.files import File
 
 from packageindex.models import PackageIndex, Application, Package
@@ -47,6 +47,7 @@ class Release(models.Model):
     def released(self):
         return bool(self.package)
     
+    @transaction.commit_on_success()
     def build_package(self):
         package = Package(title=self.title,
                           version=self.version,
