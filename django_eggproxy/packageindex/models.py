@@ -224,6 +224,7 @@ class Package(models.Model):
     
     class Meta:
         ordering = ['-order']
+        unique_together = [('application', 'package_index', 'title')]
     
     @models.permalink
     def get_counting_download_url(self, access_key=None):

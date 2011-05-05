@@ -49,6 +49,7 @@ class Release(models.Model):
     
     @transaction.commit_on_success()
     def build_package(self):
+        #consider, we should suffix the title with the package suffix
         package = Package(title=self.title,
                           version=self.version,
                           application=self.application.application,
