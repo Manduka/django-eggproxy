@@ -65,3 +65,12 @@ def download_package(request, name, title, access_key):
         return HttpResponseForbidden('Cannot download this package')
     Package.objects.filter(pk=package.pk).update(downloads=F('downloads')+1)
     return HttpResponseRedirect(package.get_download_url())
+
+@access_key_view
+def direct_download_package(request, package_id, access_key):
+    package = get_object_or_404(Package, pk=package_id)
+    if not package.package_index.can_read(request.user):
+        return HttpResponseForbidden('Cannot download this package')
+    Package.objects.filter(pk=package.pk).update(downloads=F('downloads')+1)
+    return HttpResponseRedirect(package.get_download_url())
+
