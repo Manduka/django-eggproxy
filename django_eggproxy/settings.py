@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
     'django.contrib.markup',
     'django.contrib.comments',
     'django.contrib.sitemaps',
@@ -64,8 +65,8 @@ INSTALLED_APPS = (
     'packageindex',
     'releases',
     'guardian',
-    'staticfiles',
     'djcelery',
+    'tastypie',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -74,6 +75,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    ('', '%s/public/static/' % PROJECT_DIR),
+]
 
 MEDIA_ROOT = '%s/public/media/' % PROJECT_DIR
 STATIC_ROOT = ''#'%s/public/static/' % PROJECT_DIR

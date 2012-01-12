@@ -1,5 +1,6 @@
-django>=1.2
+django>=1.3
 django-guardian
-django-staticfiles
 django-celery
 django-kombu
+django-tastypie
+boto
