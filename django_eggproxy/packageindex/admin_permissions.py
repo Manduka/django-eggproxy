@@ -22,6 +22,7 @@ class BasePermissionInline(generic.GenericTabularInline):
         if db_field.name == 'permission':
             perm_choices = get_perms_for_model(self.parent_model)
             kwargs['queryset'] = perm_choices
+            kwargs.pop('request', None)
             return db_field.formfield(**kwargs)
         return super(BasePermissionInline, self).formfield_for_dbfield(db_field, **kwargs)
 
