@@ -7,4 +7,4 @@ class Command(BaseCommand):
    
     def execute(self, *args, **kwargs):
         PackageIndex.objects.refresh_stale_indexes()
-        Package.objects.populate_pending_downloads()
+        Package.objects.populate_pending_downloads(ignore_errors=True)
