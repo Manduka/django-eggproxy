@@ -15,6 +15,8 @@ class HttpResponseUnauthorized(HttpResponse):
 # Uses the HttpBasicAuthenticator to enforce HTTP basic authentication for
 # an entire application.
 
+SAFE_URLS = (getattr(settings, 'LOGIN_URL', '/accounts/login/'), '/health-check/', '/500/', '/404/', '/packageindex/')
+
 class HttpBasicMiddleware(object):
     def process_request(self, request):
         if request.user.is_authenticated():
@@ -28,6 +30,9 @@ class HttpBasicMiddleware(object):
                 if user is not None and user.is_active:
                     login(request, user)
                     return
+        for url in SAFE_URLS:
+            if request.path.startswith(url):
+                return
         response = HttpResponseUnauthorized()
         realm = 'siteauth'
         response['WWW-Authenticate'] = 'Basic realm="%s"' % realm
@@ -39,6 +44,8 @@ class RequireLoginMiddleware(object):
         self.require_login_path = getattr(settings, 'LOGIN_URL', '/accounts/login/')
     
     def process_request(self, request):
-        if (request.user.is_anonymous() and request.path not in (self.require_login_path, '/health-check/', '/500/', '/404/') and
-            not request.path.startswith('/packageindex/')):
+        for url in SAFE_URLS:
+            if request.path.startswith(url):
+                return
+        if (request.user.is_anonymous()):
             return HttpResponseRedirect('%s?next=%s' % (self.require_login_path, request.path))
