@@ -39,6 +39,6 @@ class RequireLoginMiddleware(object):
         self.require_login_path = getattr(settings, 'LOGIN_URL', '/accounts/login/')
     
     def process_request(self, request):
-        if (request.user.is_anonymous() and request.path != self.require_login_path and
+        if (request.user.is_anonymous() and request.path not in (self.require_login_path, '/health-check/', '/500/', '/404/') and
             not request.path.startswith('/packageindex/')):
             return HttpResponseRedirect('%s?next=%s' % (self.require_login_path, request.path))
