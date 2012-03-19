@@ -44,6 +44,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'auth_middleware.HttpBasicMiddleware',
+    'auth_middleware.RequireLoginMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
@@ -67,6 +69,7 @@ INSTALLED_APPS = (
     'guardian',
     'djcelery',
     'tastypie',
+    'djangopypi',
 )
 
 AUTHENTICATION_BACKENDS = (
