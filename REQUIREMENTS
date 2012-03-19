@@ -3,5 +3,5 @@ django-guardian
 django-celery
 django-kombu
 django-tastypie
-django-pypi
+djangopypi
 boto
