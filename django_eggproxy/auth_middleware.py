@@ -33,6 +33,8 @@ class HttpBasicMiddleware(object):
         for url in SAFE_URLS:
             if request.path.startswith(url):
                 return
+        if request.path == '/pypi/':
+            return
         response = HttpResponseUnauthorized()
         realm = 'siteauth'
         response['WWW-Authenticate'] = 'Basic realm="%s"' % realm
@@ -47,5 +49,7 @@ class RequireLoginMiddleware(object):
         for url in SAFE_URLS:
             if request.path.startswith(url):
                 return
+        if request.path == '/pypi/':
+            return
         if (request.user.is_anonymous()):
             return HttpResponseRedirect('%s?next=%s' % (self.require_login_path, request.path))
